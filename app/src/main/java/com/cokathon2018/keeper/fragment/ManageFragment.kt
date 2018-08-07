@@ -11,6 +11,7 @@ import com.cokathon2018.keeper.R
 import com.cokathon2018.keeper.`interface`.OnClickListener
 import com.cokathon2018.keeper.adapter.ManageAdapter
 import com.cokathon2018.keeper.adapter.ManageItem
+import kotlinx.android.synthetic.main.fragment_manage.*
 import kotlinx.android.synthetic.main.fragment_manage.view.*
 
 class ManageFragment : Fragment(), OnClickListener{
@@ -25,12 +26,27 @@ class ManageFragment : Fragment(), OnClickListener{
         v = inflater.inflate(R.layout.fragment_manage, container, false)
 
         initRecyclerView()
+        v!!.swiperefresh.setOnRefreshListener {
+            val strUsrlist = PreferencesUtils(activity!!).getData("user")
+            val usrlist = strUsrlist.split(",")
+            if(strUsrlist.isNotEmpty()) {
+                mItems.clear()
+                for (usr: String in usrlist) {
+                    mItems.add(ManageItem(usr, "18.8.7 18:15"))
+                }
+                adapter!!.notifyDataSetChanged()
+            }
+            v!!.swiperefresh.isRefreshing = false
+        }
         val strUsrlist = PreferencesUtils(activity!!).getData("user")
         val usrlist = strUsrlist.split(",")
-        if(strUsrlist.isNotEmpty())
-            for(usr : String in usrlist){
-                mItems.add(ManageItem(usr,"18.8.7 18:15"))
+        if(strUsrlist.isNotEmpty()) {
+            mItems.clear()
+            for (usr: String in usrlist) {
+                mItems.add(ManageItem(usr, "18.8.7 18:15"))
             }
+            adapter!!.notifyDataSetChanged()
+        }
         return v
     }
     private fun initRecyclerView() {
